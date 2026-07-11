@@ -1,16 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibecoding Game</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="game-container">
-        <h1>Phase 0: Liftoff 🚀</h1>
-    </div>
-    
-    <script src="script.js"></script>
-</body>
-</html>
+/* Reset and center everything for a clean game viewport */
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #121212;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: system-ui, -apple-system, sans-serif;
+    overflow: hidden; /* Prevents scrollbars if game elements move off-screen */
+}
+
+#game-container {
+    text-align: center;
+}
