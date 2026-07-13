@@ -3,13 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vibecoding Game</title>
+    <title>Broken Bar UI</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="game-container">
-        <!-- Game canvas or UI will be injected here -->
-        <h1>Phase 0: Liftoff 🚀</h1>
+    <div class="game-viewport">
+        <!-- TOP AD BANNER -->
+        <header class="top-ad-section">
+            <div class="ad-banner-placeholder"></div>
+        </header>
+
+        <!-- MAIN CONTAINER (Side Panels & Core Game) -->
+        <div class="main-container">
+            <!-- LEFT PANEL (Menu, Boosts) -->
+            <aside class="side-panel">
+                <div class="menu-back-block"></div> 
+                <div class="active-boosts-list">
+                    <div class="boost-placeholder"></div>
+                    <div class="boost-placeholder"></div>
+                    <div class="boost-placeholder"></div>
+                </div>
+            </aside>
+
+            <!-- CORE GAME (Percentage, Bar, Button) -->
+            <main class="game-core-section">
+                <div class="percentage-display">34%</div>
+                <div class="progress-bar-placeholder">
+                    <div class="progress-bar-fill"></div>
+                </div>
+                <button class="increment-button-placeholder">0</button>
+            </main>
+
+            <!-- RIGHT PANEL (Ad Blocks) -->
+            <aside class="side-panel right-panel">
+                <div class="ad-panel-placeholder"></div>
+                <div class="ad-panel-placeholder"></div>
+            </aside>
+        </div>
+
+        <!-- BOTTOM AREA (Upgrades, Tabs) -->
+        <footer class="bottom-interface">
+            <div class="upgrades-area">
+                <div class="upgrades-label-placeholder"></div> 
+                <nav class="upgrade-tabs">
+                    <div class="tab-item"><div class="arrow-icon-placeholder left-arrow"></div></div>
+                    <div class="tab-item"></div>
+                    <div class="tab-item"></div>
+                    <div class="tab-item"><div class="arrow-icon-placeholder right-arrow"></div></div>
+                </nav>
+            </div>
+        </footer>
     </div>
     
     <script src="script.js"></script>
