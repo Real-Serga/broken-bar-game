@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Broken Bar UI</title>
+    <title>Broken Bar</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,9 +13,9 @@
             <div class="ad-banner-placeholder"></div>
         </header>
 
-        <!-- MAIN CONTAINER (Side Panels & Core Game) -->
+        <!-- MAIN CONTAINER -->
         <div class="main-container">
-            <!-- LEFT PANEL (Menu, Boosts) -->
+            <!-- LEFT PANEL -->
             <aside class="side-panel">
                 <div class="menu-back-block"></div> 
                 <div class="active-boosts-list">
@@ -25,23 +25,28 @@
                 </div>
             </aside>
 
-            <!-- CORE GAME (Percentage, Bar, Button) -->
+            <!-- CORE GAME -->
             <main class="game-core-section">
-                <div class="percentage-display">34%</div>
+                <!-- Added an ID here and set to 0.00% -->
+                <div class="percentage-display" id="percentage-text">0.00%</div>
+                
                 <div class="progress-bar-placeholder">
-                    <div class="progress-bar-fill"></div>
+                    <!-- Added an ID here -->
+                    <div class="progress-bar-fill" id="progress-fill-bar"></div>
                 </div>
-                <button class="increment-button-placeholder">0</button>
+                
+                <!-- Added an ID here and removed the 0 -->
+                <button class="increment-button-placeholder" id="click-button"></button>
             </main>
 
-            <!-- RIGHT PANEL (Ad Blocks) -->
+            <!-- RIGHT PANEL -->
             <aside class="side-panel right-panel">
                 <div class="ad-panel-placeholder"></div>
                 <div class="ad-panel-placeholder"></div>
             </aside>
         </div>
 
-        <!-- BOTTOM AREA (Upgrades, Tabs) -->
+        <!-- BOTTOM AREA -->
         <footer class="bottom-interface">
             <div class="upgrades-area">
                 <div class="upgrades-label-placeholder"></div> 
