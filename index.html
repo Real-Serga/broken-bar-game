@@ -10,7 +10,7 @@
     <div class="game-viewport">
         <!-- --- Top Ad Area --- -->
         <div class="top-ad-section">
-            <div class="ad-banner-placeholder"></div>
+            <div class="ad-banner-placeholder">Top Ad Banner</div>
         </div>
 
         <!-- --- Main Middle Area --- -->
@@ -24,7 +24,7 @@
                     <div class="boost-placeholder"></div>
                     <div class="boost-placeholder"></div>
                 </div>
-                <div class="ad-panel-placeholder" style="margin-top: auto;"></div>
+                <div class="ad-panel-placeholder" style="margin-top: auto;">Side Ad</div>
             </div>
 
             <!-- Game Core Central Area -->
@@ -36,38 +36,65 @@
                 <button class="increment-button-placeholder" id="click-button"></button>
             </div>
 
-            <!-- Right Panel (Store / Upgrades) -->
+            <!-- Right Panel (Now reserved entirely for Ads) -->
             <div class="side-panel right-panel">
-                <div class="store-container">
-                    <h3 class="store-title">Upgrades</h3>
-                    
-                    <!-- Level 1 Auto-Loader -->
-                    <div class="store-item" id="item-autoloader">
-                        <div class="item-info">
-                            <h4>Auto-Loader</h4>
-                            <p>Generates +0.01% every second</p>
-                        </div>
-                        <button class="buy-button" id="buy-autoloader">Cost: 5.00%</button>
-                    </div>
+                <div class="ad-panel-placeholder" style="height: 100%; display: flex; align-items: center; justify-content: center;">
+                    Foreign Ad Space
                 </div>
             </div>
 
         </div>
 
-        <!-- --- Bottom upgrades area --- -->
+        <!-- --- Bottom Upgrades Area --- -->
         <div class="bottom-interface">
-            <div class="upgrades-area">
-                <div class="upgrades-label-placeholder"></div>
-                <div class="upgrade-tabs">
-                    <div class="tab-item">
-                        <span class="arrow-icon-placeholder left-arrow"></span>
+            <h3 class="store-title">Upgrades Shop</h3>
+            
+            <div class="upgrades-carousel">
+                <!-- Circular Left Scroll Button -->
+                <button class="scroll-btn left-scroll">&#9664;</button>
+                
+                <!-- Horizontal Upgrades List -->
+                <div class="horizontal-store" id="upgrades-list">
+                    
+                    <!-- Level 1 Auto-Loader -->
+                    <div class="store-item" id="item-autoloader">
+                        <div class="item-info">
+                            <h4>Auto-Loader</h4>
+                            <p>Generates +0.01%/sec</p>
+                        </div>
+                        <button class="buy-button" id="buy-autoloader">Cost: 5.00%</button>
                     </div>
-                    <div class="tab-item"></div>
-                    <div class="tab-item"></div>
-                    <div class="tab-item">
-                        <span class="arrow-icon-placeholder right-arrow"></span>
+
+                    <!-- Placeholder Locked Upgrade 2 -->
+                    <div class="store-item locked">
+                        <div class="item-info">
+                            <h4>Multiplier</h4>
+                            <p>Click power x2</p>
+                        </div>
+                        <button class="buy-button disabled">Cost: 25.00%</button>
+                    </div>
+
+                    <!-- Placeholder Locked Upgrade 3 -->
+                    <div class="store-item locked">
+                        <div class="item-info">
+                            <h4>Overclock</h4>
+                            <p>Speed +50%</p>
+                        </div>
+                        <button class="buy-button disabled">Cost: 50.00%</button>
+                    </div>
+
+                    <!-- Placeholder Locked Upgrade 4 -->
+                    <div class="store-item locked">
+                        <div class="item-info">
+                            <h4>Quantum Click</h4>
+                            <p>Massive boost</p>
+                        </div>
+                        <button class="buy-button disabled">Cost: 75.00%</button>
                     </div>
                 </div>
+
+                <!-- Circular Right Scroll Button -->
+                <button class="scroll-btn right-scroll">&#9654;</button>
             </div>
         </div>
     </div>
