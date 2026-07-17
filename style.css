@@ -61,7 +61,7 @@ body {
 }
 
 .right-panel {
-    justify-content: space-around; 
+    justify-content: flex-start; /* Changed to flex-start so the store aligns at the top */
 }
 
 .menu-back-block {
@@ -222,4 +222,63 @@ body {
         opacity: 0;
         transform: translateY(-60px); 
     }
+}
+
+/* --- Store UI Layout (v0.7) --- */
+.store-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+}
+
+.store-title {
+    color: #eeeeee;
+    text-align: center;
+    border-bottom: 2px solid #444;
+    padding-bottom: 10px;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.store-item {
+    background-color: #262626;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.item-info h4 {
+    color: #00BFFF; 
+    margin-bottom: 4px;
+    font-size: 1.1rem;
+}
+
+.item-info p {
+    color: #aaaaaa;
+    font-size: 0.8rem;
+}
+
+.buy-button {
+    background-color: transparent;
+    border: 2px solid #32CD32; 
+    color: #32CD32;
+    padding: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.2s, color 0.2s, transform 0.1s;
+}
+
+.buy-button:hover {
+    background-color: #32CD32;
+    color: #121212;
+}
+
+.buy-button:active {
+    transform: scale(0.95); 
 }

@@ -3,63 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Broken Bar</title>
+    <title>Broken Bar Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="game-viewport">
-        <!-- TOP AD BANNER -->
-        <header class="top-ad-section">
+        <!-- --- Top Ad Area --- -->
+        <div class="top-ad-section">
             <div class="ad-banner-placeholder"></div>
-        </header>
+        </div>
 
-        <!-- MAIN CONTAINER -->
+        <!-- --- Main Middle Area --- -->
         <div class="main-container">
-            <!-- LEFT PANEL -->
-            <aside class="side-panel">
-                <div class="menu-back-block"></div> 
+            
+            <!-- Left Panel -->
+            <div class="side-panel left-panel">
+                <div class="menu-back-block"></div>
                 <div class="active-boosts-list">
                     <div class="boost-placeholder"></div>
                     <div class="boost-placeholder"></div>
                     <div class="boost-placeholder"></div>
                 </div>
-            </aside>
+                <div class="ad-panel-placeholder" style="margin-top: auto;"></div>
+            </div>
 
-            <!-- CORE GAME -->
-            <main class="game-core-section">
-                <!-- Added an ID here and set to 0.00% -->
+            <!-- Game Core Central Area -->
+            <div class="game-core-section">
                 <div class="percentage-display" id="percentage-text">0.00%</div>
-                
                 <div class="progress-bar-placeholder">
-                    <!-- Added an ID here -->
                     <div class="progress-bar-fill" id="progress-fill-bar"></div>
                 </div>
-                
-                <!-- Added an ID here and removed the 0 -->
                 <button class="increment-button-placeholder" id="click-button"></button>
-            </main>
+            </div>
 
-            <!-- RIGHT PANEL -->
-            <aside class="side-panel right-panel">
-                <div class="ad-panel-placeholder"></div>
-                <div class="ad-panel-placeholder"></div>
-            </aside>
+            <!-- Right Panel (Store / Upgrades) -->
+            <div class="side-panel right-panel">
+                <div class="store-container">
+                    <h3 class="store-title">Upgrades</h3>
+                    
+                    <!-- Level 1 Auto-Loader -->
+                    <div class="store-item" id="item-autoloader">
+                        <div class="item-info">
+                            <h4>Auto-Loader</h4>
+                            <p>Generates +0.01% every second</p>
+                        </div>
+                        <button class="buy-button" id="buy-autoloader">Cost: 5.00%</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- BOTTOM AREA -->
-        <footer class="bottom-interface">
+        <!-- --- Bottom upgrades area --- -->
+        <div class="bottom-interface">
             <div class="upgrades-area">
-                <div class="upgrades-label-placeholder"></div> 
-                <nav class="upgrade-tabs">
-                    <div class="tab-item"><div class="arrow-icon-placeholder left-arrow"></div></div>
+                <div class="upgrades-label-placeholder"></div>
+                <div class="upgrade-tabs">
+                    <div class="tab-item">
+                        <span class="arrow-icon-placeholder left-arrow"></span>
+                    </div>
                     <div class="tab-item"></div>
                     <div class="tab-item"></div>
-                    <div class="tab-item"><div class="arrow-icon-placeholder right-arrow"></div></div>
-                </nav>
+                    <div class="tab-item">
+                        <span class="arrow-icon-placeholder right-arrow"></span>
+                    </div>
+                </div>
             </div>
-        </footer>
+        </div>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
