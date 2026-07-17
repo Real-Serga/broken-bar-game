@@ -16,7 +16,7 @@ body {
     overflow: hidden; 
 }
 
-/* Outer Game Viewport Container - NOW FULL SCREEN */
+/* Outer Game Viewport Container - FULL SCREEN */
 .game-viewport {
     width: 100vw;
     height: 100vh;
@@ -46,7 +46,7 @@ body {
     flex-direction: row;
     flex-grow: 1; 
     margin-bottom: 20px;
-    gap: 15px; /* Added gap to separate panels naturally */
+    gap: 15px; 
 }
 
 /* Side Panels */
@@ -99,7 +99,7 @@ body {
     align-items: center;
     justify-content: center; 
     padding: 20px;
-    border: 1px solid #444; /* Added subtle border to separate core game */
+    border: 1px solid #444; 
     background-color: #161616;
 }
 
@@ -123,7 +123,7 @@ body {
 
 .progress-bar-fill {
     height: 100%;
-    width: 0%; /* SET TO 0% START */
+    width: 0%; 
     background: linear-gradient(90deg, #32CD32 0%, #32CD32 100%); 
     box-shadow: 0 0 10px rgba(50, 205, 50, 0.5); 
 }
@@ -205,15 +205,14 @@ body {
 /* --- Click Feedback Animation --- */
 .floating-text {
     position: absolute;
-    color: #32CD32; /* Matches your green progress bar */
+    color: #32CD32; 
     font-size: 1.5rem;
     font-weight: bold;
-    pointer-events: none; /* Prevents the text from blocking your fast clicks */
+    pointer-events: none; 
     animation: floatUpAndFade 1s ease-out forwards;
     z-index: 100;
 }
 
-/* Keyframes tell the CSS exactly how to animate */
 @keyframes floatUpAndFade {
     0% {
         opacity: 1;
@@ -221,6 +220,6 @@ body {
     }
     100% {
         opacity: 0;
-        transform: translateY(-60px); /* Floats up 60 pixels */
+        transform: translateY(-60px); 
     }
 }

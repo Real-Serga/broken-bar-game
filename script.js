@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const percentageText = document.getElementById('percentage-text');
     const progressBarFill = document.getElementById('progress-fill-bar');
 
-    // Notice we added 'event' inside the parentheses here
     clickButton.addEventListener('click', (event) => {
         
         if (currentProgress < 100) {
@@ -24,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- NEW: Function to create floating text ---
+    // --- Function to create floating text ---
     function spawnFloatingText(x, y) {
         // 1. Create a brand new div in the memory
         const floatText = document.createElement('div');
@@ -32,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
         floatText.classList.add('floating-text'); // Attach the CSS animation
         
         // 2. Position it exactly where the mouse clicked
-        // We subtract a little bit so it centers nicely on the cursor
         floatText.style.left = (x - 20) + 'px'; 
         floatText.style.top = (y - 20) + 'px';
         
@@ -40,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(floatText);
         
         // 4. Set a timer to destroy the element after 1000ms (1 second) 
-        // If we don't do this, clicking 10,000 times will crash the browser!
         setTimeout(() => {
             floatText.remove();
         }, 1000);
