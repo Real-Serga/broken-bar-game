@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clickButton.addEventListener('click', (event) => {
         
         if (currentProgress < 100) {
-            currentProgress += 0.01;
+            currentProgress += 1.00; // Increased to 1% for testing
             
             if (currentProgress > 100) {
                 currentProgress = 100.00;
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function spawnFloatingText(x, y) {
         // 1. Create a brand new div in the memory
         const floatText = document.createElement('div');
-        floatText.innerText = '+0.01%';
+        floatText.innerText = '+1.00%'; // Updated visual feedback
         floatText.classList.add('floating-text'); // Attach the CSS animation
         
         // 2. Position it exactly where the mouse clicked
