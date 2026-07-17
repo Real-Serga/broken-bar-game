@@ -1,30 +1,48 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Set our starting number
     let currentProgress = 0.00;
     
-    // Grab the specific HTML elements by their IDs
     const clickButton = document.getElementById('click-button');
     const percentageText = document.getElementById('percentage-text');
     const progressBarFill = document.getElementById('progress-fill-bar');
 
-    // Listen for clicks on the button
-    clickButton.addEventListener('click', () => {
+    // Notice we added 'event' inside the parentheses here
+    clickButton.addEventListener('click', (event) => {
         
-        // Only increase if we are under 100%
         if (currentProgress < 100) {
             currentProgress += 0.01;
             
-            // Hard cap at 100 just in case
             if (currentProgress > 100) {
                 currentProgress = 100.00;
             }
 
-            // Update the text on the screen (clamped to 2 decimal places)
             percentageText.innerText = currentProgress.toFixed(2) + '%';
-            
-            // Update the width of the green CSS bar
             progressBarFill.style.width = currentProgress + '%';
+            
+            // Trigger the visual feedback at the mouse's X and Y coordinates
+            spawnFloatingText(event.clientX, event.clientY);
         }
     });
+
+    // --- NEW: Function to create floating text ---
+    function spawnFloatingText(x, y) {
+        // 1. Create a brand new div in the memory
+        const floatText = document.createElement('div');
+        floatText.innerText = '+0.01%';
+        floatText.classList.add('floating-text'); // Attach the CSS animation
+        
+        // 2. Position it exactly where the mouse clicked
+        // We subtract a little bit so it centers nicely on the cursor
+        floatText.style.left = (x - 20) + 'px'; 
+        floatText.style.top = (y - 20) + 'px';
+        
+        // 3. Inject it into the HTML body
+        document.body.appendChild(floatText);
+        
+        // 4. Set a timer to destroy the element after 1000ms (1 second) 
+        // If we don't do this, clicking 10,000 times will crash the browser!
+        setTimeout(() => {
+            floatText.remove();
+        }, 1000);
+    }
 });
