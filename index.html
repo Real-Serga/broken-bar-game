@@ -36,7 +36,7 @@
                 <button class="increment-button-placeholder" id="click-button"></button>
             </div>
 
-            <!-- Right Panel (Now reserved entirely for Ads) -->
+            <!-- Right Panel -->
             <div class="side-panel right-panel">
                 <div class="ad-panel-placeholder" style="height: 100%; display: flex; align-items: center; justify-content: center;">
                     Foreign Ad Space
@@ -50,28 +50,33 @@
             <h3 class="store-title">Upgrades Shop</h3>
             
             <div class="upgrades-carousel">
-                <!-- Circular Left Scroll Button -->
                 <button class="scroll-btn left-scroll">&#9664;</button>
                 
-                <!-- Horizontal Upgrades List -->
                 <div class="horizontal-store" id="upgrades-list">
                     
                     <!-- Level 1 Auto-Loader -->
                     <div class="store-item" id="item-autoloader">
                         <div class="item-info">
-                            <h4>Auto-Loader</h4>
+                            <div class="item-header">
+                                <h4>Auto-Loader</h4>
+                                <span id="autoloader-count" class="upgrade-count">0/10</span>
+                            </div>
                             <p>Generates +0.01%/sec</p>
                         </div>
                         <button class="buy-button" id="buy-autoloader">Cost: 5.00%</button>
                     </div>
 
-                    <!-- Placeholder Locked Upgrade 2 -->
-                    <div class="store-item locked">
+                    <!-- Multiplier Upgrade (Now Unlocked) -->
+                    <div class="store-item" id="item-multiplier">
                         <div class="item-info">
-                            <h4>Multiplier</h4>
-                            <p>Click power x2</p>
+                            <div class="item-header">
+                                <h4>Multiplier</h4>
+                                <span id="multiplier-count" class="upgrade-count">0</span>
+                            </div>
+                            <p>Click power x1.1</p>
                         </div>
-                        <button class="buy-button disabled">Cost: 25.00%</button>
+                        <!-- Cost set to 15% for balanced testing -->
+                        <button class="buy-button" id="buy-multiplier">Cost: 15.00%</button>
                     </div>
 
                     <!-- Placeholder Locked Upgrade 3 -->
@@ -93,7 +98,6 @@
                     </div>
                 </div>
 
-                <!-- Circular Right Scroll Button -->
                 <button class="scroll-btn right-scroll">&#9654;</button>
             </div>
         </div>
