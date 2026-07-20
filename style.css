@@ -256,6 +256,7 @@ body {
     justify-content: space-between;
     gap: 10px;
     min-width: 200px; 
+    position: relative; /* Anchor for internal tooltips */
 }
 
 .store-item.locked {
@@ -270,9 +271,10 @@ body {
     margin-bottom: 5px;
 }
 
-.title-with-info {
+.header-right {
     display: flex;
     align-items: center;
+    gap: 8px; /* Clean spacing between counter and circle */
 }
 
 .item-info h4 {
@@ -293,7 +295,7 @@ body {
 
 /* Dynamic Tooltip Info Circle */
 .info-circle {
-    display: none; /* Hidden by default via JS */
+    display: none; 
     width: 18px;
     height: 18px;
     border-radius: 50%;
@@ -303,8 +305,7 @@ body {
     font-family: Arial, sans-serif;
     font-weight: bold;
     text-align: center;
-    line-height: 18px;
-    margin-left: 8px;
+    line-height: 16px; /* Adjusted for perfect vertical centering within the border */
     cursor: help;
     position: relative;
     border: 1px solid #ffae42;
@@ -313,9 +314,10 @@ body {
 .info-circle::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: 140%;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 140%; /* Pushes the tooltip downward */
+    right: -2px; /* Aligns to the right edge so it doesn't spill over */
+    left: auto;
+    transform: none; /* Removes the centering pull */
     background-color: #222;
     color: #ffae42;
     padding: 6px 10px;
@@ -326,7 +328,7 @@ body {
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease-in-out;
-    z-index: 10;
+    z-index: 300; /* Stays above other store items */
 }
 
 .info-circle:hover::after {
