@@ -7,13 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-Loader Stats
     let autoLoaders = 0;
     let autoLoaderCap = 10;
-    let autoLoaderInterval = null;
     let capExpanded = false; 
 
-    // Multiplier Stats (Dynamic pricing array mapping exactly to +15% and +10%)
+    // Multiplier Stats
     let multipliers = 0;
     const multiplierCap = 3; 
     const multiplierCosts = [15.00, 30.00, 40.00];
+
+    // --- Threat System Variables ---
+    const threatOverlay = document.getElementById('threat-overlay');
+    let activeMalwares = []; // Tracks malware instances actively draining progress
+    let bloatwareActive = false; // Tracks if a bloatware slowdown is active
 
     // --- HTML Elements ---
     const clickButton = document.getElementById('click-button');
@@ -41,20 +45,19 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             cost = 0.75 + ((autoLoaders - 1) * 0.15); 
         }
-        
         return Math.min(cost, 5.00);
     }
 
     function getMultiplierCost() {
-        // Fallback to the last array element if something goes wrong
         return multiplierCosts[multipliers] || multiplierCosts[multiplierCosts.length - 1];
     }
 
     // --- Global UI Updater ---
     function updateDisplay() {
-        if (currentProgress > 100) {
-            currentProgress = 100.00;
-        }
+        // Clamp bounds to prevent visual bugs
+        if (currentProgress < 0) currentProgress = 0.00;
+        if (currentProgress > 100) currentProgress = 100.00;
+        
         percentageText.innerText = currentProgress.toFixed(2) + '%';
         progressBarFill.style.width = currentProgress + '%';
 
@@ -65,22 +68,18 @@ document.addEventListener('DOMContentLoaded', () => {
             spawnFloatingAlert("Auto-Loader Cap Expanded!");
         }
 
-        // Continually check if buttons should be green (affordable) or gray (unaffordable)
         updateAutoLoaderUI(); 
         updateMultiplierUI();
     }
 
-    // Refresh Auto-Loader UI (Handles Colors, Cap, and Tooltip Info Circle)
     function updateAutoLoaderUI() {
         autoloaderCountText.innerText = `${autoLoaders}/${autoLoaderCap}`;
         const currentCost = getAutoLoaderCost();
         
         if (autoLoaders >= autoLoaderCap) {
             buyAutoloaderBtn.classList.add('disabled');
-            
             if (!capExpanded) {
                 buyAutoloaderBtn.innerText = "MAX CAP";
-                // Show the small "i" circle only when capped and 25% not met
                 autoloaderInfoCircle.style.display = "inline-block"; 
             } else {
                 buyAutoloaderBtn.innerText = "MAX LEVEL";
@@ -89,8 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             buyAutoloaderBtn.innerText = `Cost: ${currentCost.toFixed(2)}%`;
             autoloaderInfoCircle.style.display = "none";
-
-            // Affordability Check
             if (currentProgress < currentCost) {
                 buyAutoloaderBtn.classList.add('disabled'); 
             } else {
@@ -99,18 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Refresh Multiplier UI (Handles Colors, Cap, and Dynamic Pricing)
     function updateMultiplierUI() {
         multiplierCountText.innerText = `${multipliers}/${multiplierCap}`;
-        
         if (multipliers >= multiplierCap) {
             buyMultiplierBtn.innerText = "MAX CAP";
             buyMultiplierBtn.classList.add('disabled');
         } else {
             const currentMultCost = getMultiplierCost();
             buyMultiplierBtn.innerText = `Cost: ${currentMultCost.toFixed(2)}%`;
-            
-            // Affordability Check
             if (currentProgress < currentMultCost) {
                 buyMultiplierBtn.classList.add('disabled'); 
             } else {
@@ -124,28 +117,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentProgress < 100) {
             currentProgress += clickPower;
             updateDisplay();
-            spawnFloatingText(event.clientX, event.clientY, `+${clickPower.toFixed(2)}%`);
+            spawnFloatingText(event.clientX, event.clientY, `+${clickPower.toFixed(2)}%`, '#32CD32');
         }
     });
 
     // --- Auto-Loader Purchase Logic ---
     buyAutoloaderBtn.addEventListener('click', () => {
         const currentCost = getAutoLoaderCost();
-
         if (currentProgress >= currentCost && autoLoaders < autoLoaderCap) {
             currentProgress -= currentCost;
             autoLoaders++;
-            
             updateDisplay();
-
-            if (!autoLoaderInterval) {
-                autoLoaderInterval = setInterval(() => {
-                    if (currentProgress < 100 && autoLoaders > 0) {
-                        currentProgress += (0.01 * autoLoaders);
-                        updateDisplay(); 
-                    }
-                }, 1000); 
-            }
         } else if (autoLoaders < autoLoaderCap) {
             buyAutoloaderBtn.innerText = "Not Enough!";
             setTimeout(() => { updateDisplay(); }, 1000);
@@ -155,18 +137,146 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Multiplier Purchase Logic ---
     buyMultiplierBtn.addEventListener('click', () => {
         const currentMultCost = getMultiplierCost();
-
         if (currentProgress >= currentMultCost && multipliers < multiplierCap) {
             currentProgress -= currentMultCost;
             multipliers++;
             clickPower *= 1.1; 
-            
             updateDisplay();
         } else if (multipliers < multiplierCap) {
             buyMultiplierBtn.innerText = "Not Enough!";
             setTimeout(() => { updateDisplay(); }, 1000);
         }
     });
+
+    // --- Global Game Loop (Runs every 1 second) ---
+    // Handles Autoloader Generation and Threat Drains
+    setInterval(() => {
+        if (currentProgress < 100) {
+            // 1. Calculate Generation
+            let generation = (0.01 * autoLoaders);
+            
+            // Apply Bloatware Debuff (Halves generation speed)
+            if (bloatwareActive) {
+                generation *= 0.5; 
+            }
+            
+            // 2. Calculate Drain
+            // Each active malware drains 0.05% per second
+            let drain = (activeMalwares.length * 0.05);
+
+            // 3. Apply changes
+            currentProgress += generation;
+            currentProgress -= drain;
+            
+            updateDisplay();
+        }
+    }, 1000);
+
+
+    // --- Threat Spawning Functions (Phase 2 Placeholders) ---
+
+    function getRandomPosition(width, height) {
+        // Keeps the element inside the window boundaries
+        const x = Math.max(0, Math.random() * (window.innerWidth - width));
+        const y = Math.max(0, Math.random() * (window.innerHeight - height));
+        return { x, y };
+    }
+
+    function spawnMalware() {
+        const malware = document.createElement('div');
+        malware.classList.add('malware-entity');
+        
+        let hp = 3; // Takes 3 clicks to kill
+        malware.innerHTML = `MALWARE<br>HP:${hp}`;
+        
+        const pos = getRandomPosition(45, 45);
+        malware.style.left = `${pos.x}px`;
+        malware.style.top = `${pos.y}px`;
+
+        threatOverlay.appendChild(malware);
+        activeMalwares.push(malware); // Add to active drain array
+
+        // Click to damage
+        malware.addEventListener('click', (e) => {
+            hp--;
+            malware.innerHTML = `MALWARE<br>HP:${hp}`;
+            spawnFloatingText(e.clientX, e.clientY, `-1 HP`, '#ff0000');
+            
+            if (hp <= 0) {
+                malware.remove();
+                // Remove from the active tracking array
+                activeMalwares = activeMalwares.filter(m => m !== malware);
+            }
+        });
+    }
+
+    function spawnBloatware() {
+        if (bloatwareActive) return; // Only one bloatware at a time for the placeholder
+        
+        const bloatware = document.createElement('div');
+        bloatware.classList.add('bloatware-entity');
+        bloatwareActive = true; 
+        
+        let hp = 5; // Takes 5 clicks to clear
+        bloatware.innerHTML = `BLOAT<br>HP:${hp}`;
+        
+        const pos = getRandomPosition(65, 65);
+        bloatware.style.left = `${pos.x}px`;
+        bloatware.style.top = `${pos.y}px`;
+
+        threatOverlay.appendChild(bloatware);
+
+        // Click to damage
+        bloatware.addEventListener('click', (e) => {
+            hp--;
+            bloatware.innerHTML = `BLOAT<br>HP:${hp}`;
+            spawnFloatingText(e.clientX, e.clientY, `-1 HP`, '#cccccc');
+            
+            if (hp <= 0) {
+                bloatware.remove();
+                bloatwareActive = false; // Restore speed
+            }
+        });
+    }
+
+    function spawnAdware() {
+        const adware = document.createElement('div');
+        adware.classList.add('adware-popup');
+        
+        const pos = getRandomPosition(220, 140);
+        adware.style.left = `${pos.x}px`;
+        adware.style.top = `${pos.y}px`;
+
+        adware.innerHTML = `
+            <div class="adware-header">
+                <span>WARNING!</span>
+                <span class="adware-close">X</span>
+            </div>
+            <div class="adware-body">
+                System memory low!<br>Click here to fix!
+            </div>
+        `;
+
+        threatOverlay.appendChild(adware);
+
+        // Only the X button closes it
+        const closeBtn = adware.querySelector('.adware-close');
+        closeBtn.addEventListener('click', () => {
+            adware.remove();
+        });
+    }
+
+    // --- Threat Director (Spawns a random threat every 10 seconds for testing) ---
+    setInterval(() => {
+        const rand = Math.random();
+        if (rand < 0.33) {
+            spawnMalware();
+        } else if (rand < 0.66) {
+            spawnBloatware();
+        } else {
+            spawnAdware();
+        }
+    }, 10000); 
 
     // --- Carousel Scrolling Logic ---
     leftScrollBtn.addEventListener('click', () => {
@@ -178,10 +288,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Visual Feedback Functions ---
-    function spawnFloatingText(x, y, text) {
+    // Added a color parameter so different events can have different text colors
+    function spawnFloatingText(x, y, text, color = '#32CD32') {
         const floatText = document.createElement('div');
         floatText.innerText = text; 
         floatText.classList.add('floating-text'); 
+        floatText.style.color = color;
         
         floatText.style.left = (x - 20) + 'px'; 
         floatText.style.top = (y - 20) + 'px';

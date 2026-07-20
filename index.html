@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Overlay container for all spawned threats -->
+    <div id="threat-overlay" class="threat-overlay"></div>
+
     <div class="game-viewport">
         <!-- --- Top Ad Area --- -->
         <div class="top-ad-section">
@@ -59,7 +62,6 @@
                         <div class="item-info">
                             <div class="item-header">
                                 <h4>Auto-Loader</h4>
-                                <!-- Grouped counter and info circle to the top right -->
                                 <div class="header-right">
                                     <span id="autoloader-count" class="upgrade-count">0/10</span>
                                     <span class="info-circle" id="autoloader-info" data-tooltip="Reach 25.00% progress to unlock more!">i</span>
