@@ -7,12 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-Loader Stats
     let autoLoaders = 0;
     let autoLoaderCap = 10;
-    const autoLoaderCost = 5.00;
     let autoLoaderInterval = null;
-    let capExpanded = false; // Tracks if we hit the 25% threshold
+    let capExpanded = false; 
 
     // Multiplier Stats
     let multipliers = 0;
+    const multiplierCap = 3; // Strict balance limit added here
     const multiplierCost = 15.00; 
 
     // --- HTML Elements ---
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const buyAutoloaderBtn = document.getElementById('buy-autoloader');
     const autoloaderCountText = document.getElementById('autoloader-count');
+    const autoloaderUnlockInfo = document.getElementById('autoloader-unlock-info');
     
     const buyMultiplierBtn = document.getElementById('buy-multiplier');
     const multiplierCountText = document.getElementById('multiplier-count');
@@ -29,6 +30,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const upgradesList = document.getElementById('upgrades-list');
     const leftScrollBtn = document.querySelector('.left-scroll');
     const rightScrollBtn = document.querySelector('.right-scroll');
+
+
+    // --- Dynamic Pricing Function ---
+    function getAutoLoaderCost() {
+        let cost = 0;
+        if (autoLoaders === 0) {
+            cost = 0.50; // First cost
+        } else if (autoLoaders === 1) {
+            cost = 0.75; // Second cost
+        } else {
+            cost = 0.75 + ((autoLoaders - 1) * 0.15); // Scales by 0.15% per level
+        }
+        
+        // Ensure the cost never exceeds the 5.00% ceiling
+        return Math.min(cost, 5.00);
+    }
 
     // --- Global UI Updater ---
     function updateDisplay() {
@@ -41,22 +58,46 @@ document.addEventListener('DOMContentLoaded', () => {
         // Check Milestone: Expand Auto-Loader Cap at 25%
         if (currentProgress >= 25.00 && !capExpanded) {
             capExpanded = true;
-            autoLoaderCap = 25; // Expands the cap limits
-            updateAutoLoaderUI(); // Refresh the button visuals
+            autoLoaderCap = 25; 
+            updateAutoLoaderUI(); 
             spawnFloatingAlert("Auto-Loader Cap Expanded!");
         }
     }
 
-    // Refresh Auto-Loader UI specifically
+    // Refresh Auto-Loader UI (Handles Info Text and Max Costs)
     function updateAutoLoaderUI() {
         autoloaderCountText.innerText = `${autoLoaders}/${autoLoaderCap}`;
+        const currentCost = getAutoLoaderCost();
         
         if (autoLoaders >= autoLoaderCap) {
-            buyAutoloaderBtn.innerText = "MAX CAP";
             buyAutoloaderBtn.classList.add('disabled');
+            
+            // Show the special unlock info text if we haven't hit the 25% milestone
+            if (!capExpanded) {
+                buyAutoloaderBtn.innerText = "MAX CAP";
+                autoloaderUnlockInfo.style.display = "block";
+                autoloaderUnlockInfo.innerText = "Reach 25.00% progress to unlock more!";
+            } else {
+                buyAutoloaderBtn.innerText = "MAX LEVEL";
+                autoloaderUnlockInfo.style.display = "none";
+            }
         } else {
-            buyAutoloaderBtn.innerText = `Cost: ${autoLoaderCost.toFixed(2)}%`;
+            buyAutoloaderBtn.innerText = `Cost: ${currentCost.toFixed(2)}%`;
             buyAutoloaderBtn.classList.remove('disabled');
+            autoloaderUnlockInfo.style.display = "none";
+        }
+    }
+
+    // Refresh Multiplier UI
+    function updateMultiplierUI() {
+        multiplierCountText.innerText = `${multipliers}/${multiplierCap}`;
+        
+        if (multipliers >= multiplierCap) {
+            buyMultiplierBtn.innerText = "MAX CAP";
+            buyMultiplierBtn.classList.add('disabled');
+        } else {
+            buyMultiplierBtn.innerText = `Cost: ${multiplierCost.toFixed(2)}%`;
+            buyMultiplierBtn.classList.remove('disabled');
         }
     }
 
@@ -65,15 +106,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentProgress < 100) {
             currentProgress += clickPower;
             updateDisplay();
-            // Pass dynamically updated click power to floating text
             spawnFloatingText(event.clientX, event.clientY, `+${clickPower.toFixed(2)}%`);
         }
     });
 
     // --- Auto-Loader Purchase Logic ---
     buyAutoloaderBtn.addEventListener('click', () => {
-        if (currentProgress >= autoLoaderCost && autoLoaders < autoLoaderCap) {
-            currentProgress -= autoLoaderCost;
+        const currentCost = getAutoLoaderCost();
+
+        if (currentProgress >= currentCost && autoLoaders < autoLoaderCap) {
+            currentProgress -= currentCost;
             autoLoaders++;
             
             updateAutoLoaderUI();
@@ -83,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!autoLoaderInterval) {
                 autoLoaderInterval = setInterval(() => {
                     if (currentProgress < 100 && autoLoaders > 0) {
-                        // Generates 0.01% multiplied by however many auto-loaders you own
                         currentProgress += (0.01 * autoLoaders);
                         updateDisplay();
                     }
@@ -97,16 +138,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Multiplier Purchase Logic ---
     buyMultiplierBtn.addEventListener('click', () => {
-        if (currentProgress >= multiplierCost) {
+        if (currentProgress >= multiplierCost && multipliers < multiplierCap) {
             currentProgress -= multiplierCost;
             multipliers++;
-            clickPower *= 1.1; // Increases base click power by 1.1x geometrically
+            clickPower *= 1.1; 
             
-            multiplierCountText.innerText = multipliers;
+            updateMultiplierUI();
             updateDisplay();
-        } else {
+        } else if (multipliers < multiplierCap) {
             buyMultiplierBtn.innerText = "Not Enough!";
-            setTimeout(() => { buyMultiplierBtn.innerText = `Cost: ${multiplierCost.toFixed(2)}%`; }, 1000);
+            setTimeout(() => { updateMultiplierUI(); }, 1000);
         }
     });
 
@@ -120,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Visual Feedback Functions ---
-    // Floating text tied to the mouse position
     function spawnFloatingText(x, y, text) {
         const floatText = document.createElement('div');
         floatText.innerText = text; 
@@ -136,7 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
-    // Centered golden alert text for milestones
     function spawnFloatingAlert(text) {
         const alertText = document.createElement('div');
         alertText.innerText = text;

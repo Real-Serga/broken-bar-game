@@ -286,6 +286,15 @@ body {
     font-size: 0.85rem;
 }
 
+/* Dynamic Unlock Info Text */
+.unlock-info {
+    color: #ffae42 !important; /* Standout orange */
+    font-size: 0.75rem !important;
+    font-weight: bold;
+    margin-top: 5px;
+    display: none; /* Hidden by default via CSS */
+}
+
 .buy-button {
     background-color: transparent;
     border: 2px solid #32CD32; 
