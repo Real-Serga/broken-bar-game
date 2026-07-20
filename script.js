@@ -115,7 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Main Click Event ---
     clickButton.addEventListener('click', (event) => {
         if (currentProgress < 100) {
-            // Apply Adware click penalty if we wanted to, but right now it just blocks the screen!
             currentProgress += clickPower;
             updateDisplay();
             spawnFloatingText(event.clientX, event.clientY, `+${clickPower.toFixed(2)}%`, '#32CD32');
@@ -243,9 +242,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const adware = document.createElement('div');
         adware.classList.add('adware-popup');
         
-        // Calculate 60% of viewport dynamically for spawn bounds
-        const adwareWidth = window.innerWidth * 0.6;
-        const adwareHeight = window.innerHeight * 0.6;
+        // Updated boundaries for the new 350x200 pixel size
+        const adwareWidth = 350;
+        const adwareHeight = 200;
         const pos = getRandomPosition(adwareWidth, adwareHeight);
         
         adware.style.left = `${pos.x}px`;
@@ -259,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="adware-body">
                 <span>SYSTEM RESOURCES EXHAUSTED!</span>
                 <br>
-                <span style="font-size: 1rem; color: #ff3333;">(Progress generation severely reduced)</span>
+                <span style="font-size: 0.9rem; color: #ff3333;">(Progress generation severely reduced)</span>
             </div>
         `;
 
