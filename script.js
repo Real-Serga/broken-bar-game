@@ -16,8 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Threat System Variables ---
     const threatOverlay = document.getElementById('threat-overlay');
-    let activeMalwares = []; // Tracks malware instances actively draining progress
-    let bloatwareActive = false; // Tracks if a bloatware slowdown is active
+    let activeMalwares = []; 
+    let bloatwareActive = false; 
+    let adwareActiveCount = 0; // Tracks if massive adwares are choking progress
 
     // --- HTML Elements ---
     const clickButton = document.getElementById('click-button');
@@ -54,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Global UI Updater ---
     function updateDisplay() {
-        // Clamp bounds to prevent visual bugs
         if (currentProgress < 0) currentProgress = 0.00;
         if (currentProgress > 100) currentProgress = 100.00;
         
@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Main Click Event ---
     clickButton.addEventListener('click', (event) => {
         if (currentProgress < 100) {
+            // Apply Adware click penalty if we wanted to, but right now it just blocks the screen!
             currentProgress += clickPower;
             updateDisplay();
             spawnFloatingText(event.clientX, event.clientY, `+${clickPower.toFixed(2)}%`, '#32CD32');
@@ -149,19 +150,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Global Game Loop (Runs every 1 second) ---
-    // Handles Autoloader Generation and Threat Drains
     setInterval(() => {
         if (currentProgress < 100) {
             // 1. Calculate Generation
             let generation = (0.01 * autoLoaders);
             
-            // Apply Bloatware Debuff (Halves generation speed)
+            // Bloatware Debuff: Halves generation speed
             if (bloatwareActive) {
                 generation *= 0.5; 
             }
+
+            // Adware Debuff: Chokes progress to a crawl (10% of normal)
+            if (adwareActiveCount > 0) {
+                generation *= 0.1;
+            }
             
             // 2. Calculate Drain
-            // Each active malware drains 0.05% per second
             let drain = (activeMalwares.length * 0.05);
 
             // 3. Apply changes
@@ -173,10 +177,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
 
 
-    // --- Threat Spawning Functions (Phase 2 Placeholders) ---
+    // --- Threat Spawning Functions ---
 
     function getRandomPosition(width, height) {
-        // Keeps the element inside the window boundaries
         const x = Math.max(0, Math.random() * (window.innerWidth - width));
         const y = Math.max(0, Math.random() * (window.innerHeight - height));
         return { x, y };
@@ -186,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const malware = document.createElement('div');
         malware.classList.add('malware-entity');
         
-        let hp = 3; // Takes 3 clicks to kill
+        let hp = 3; 
         malware.innerHTML = `MALWARE<br>HP:${hp}`;
         
         const pos = getRandomPosition(45, 45);
@@ -194,9 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
         malware.style.top = `${pos.y}px`;
 
         threatOverlay.appendChild(malware);
-        activeMalwares.push(malware); // Add to active drain array
+        activeMalwares.push(malware); 
 
-        // Click to damage
         malware.addEventListener('click', (e) => {
             hp--;
             malware.innerHTML = `MALWARE<br>HP:${hp}`;
@@ -204,20 +206,19 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (hp <= 0) {
                 malware.remove();
-                // Remove from the active tracking array
                 activeMalwares = activeMalwares.filter(m => m !== malware);
             }
         });
     }
 
     function spawnBloatware() {
-        if (bloatwareActive) return; // Only one bloatware at a time for the placeholder
+        if (bloatwareActive) return; 
         
         const bloatware = document.createElement('div');
         bloatware.classList.add('bloatware-entity');
         bloatwareActive = true; 
         
-        let hp = 5; // Takes 5 clicks to clear
+        let hp = 5; 
         bloatware.innerHTML = `BLOAT<br>HP:${hp}`;
         
         const pos = getRandomPosition(65, 65);
@@ -226,7 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         threatOverlay.appendChild(bloatware);
 
-        // Click to damage
         bloatware.addEventListener('click', (e) => {
             hp--;
             bloatware.innerHTML = `BLOAT<br>HP:${hp}`;
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (hp <= 0) {
                 bloatware.remove();
-                bloatwareActive = false; // Restore speed
+                bloatwareActive = false; 
             }
         });
     }
@@ -243,40 +243,59 @@ document.addEventListener('DOMContentLoaded', () => {
         const adware = document.createElement('div');
         adware.classList.add('adware-popup');
         
-        const pos = getRandomPosition(220, 140);
+        // Calculate 60% of viewport dynamically for spawn bounds
+        const adwareWidth = window.innerWidth * 0.6;
+        const adwareHeight = window.innerHeight * 0.6;
+        const pos = getRandomPosition(adwareWidth, adwareHeight);
+        
         adware.style.left = `${pos.x}px`;
         adware.style.top = `${pos.y}px`;
 
         adware.innerHTML = `
             <div class="adware-header">
-                <span>WARNING!</span>
+                <span>⚠️ CRITICAL SYSTEM ALERT ⚠️</span>
                 <span class="adware-close">X</span>
             </div>
             <div class="adware-body">
-                System memory low!<br>Click here to fix!
+                <span>SYSTEM RESOURCES EXHAUSTED!</span>
+                <br>
+                <span style="font-size: 1rem; color: #ff3333;">(Progress generation severely reduced)</span>
             </div>
         `;
 
         threatOverlay.appendChild(adware);
+        adwareActiveCount++; // Apply the progress choke hold
 
-        // Only the X button closes it
         const closeBtn = adware.querySelector('.adware-close');
         closeBtn.addEventListener('click', () => {
             adware.remove();
+            adwareActiveCount--; // Release the choke hold
         });
     }
 
-    // --- Threat Director (Spawns a random threat every 10 seconds for testing) ---
+    // --- Dynamic Threat Director ---
+    let threatSpawnTimer = 0;
+
     setInterval(() => {
-        const rand = Math.random();
-        if (rand < 0.33) {
-            spawnMalware();
-        } else if (rand < 0.66) {
-            spawnBloatware();
-        } else {
-            spawnAdware();
+        // Base spawn rate is every 10 seconds.
+        // Aggression Spike: Once progress reaches 30%, spawn rate jumps to every 4 seconds.
+        let currentSpawnRate = (currentProgress >= 30.00) ? 4 : 10;
+        
+        threatSpawnTimer++;
+        
+        if (threatSpawnTimer >= currentSpawnRate) {
+            threatSpawnTimer = 0; // Reset timer
+            
+            const rand = Math.random();
+            if (rand < 0.33) {
+                spawnMalware();
+            } else if (rand < 0.66) {
+                spawnBloatware();
+            } else {
+                spawnAdware();
+            }
         }
-    }, 10000); 
+    }, 1000); 
 
     // --- Carousel Scrolling Logic ---
     leftScrollBtn.addEventListener('click', () => {
@@ -288,7 +307,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Visual Feedback Functions ---
-    // Added a color parameter so different events can have different text colors
     function spawnFloatingText(x, y, text, color = '#32CD32') {
         const floatText = document.createElement('div');
         floatText.innerText = text; 
