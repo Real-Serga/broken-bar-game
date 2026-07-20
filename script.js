@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Multiplier Stats
     let multipliers = 0;
-    const multiplierCap = 3; // Strict balance limit added here
+    const multiplierCap = 3; 
     const multiplierCost = 15.00; 
 
     // --- HTML Elements ---
@@ -31,19 +31,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const leftScrollBtn = document.querySelector('.left-scroll');
     const rightScrollBtn = document.querySelector('.right-scroll');
 
-
     // --- Dynamic Pricing Function ---
     function getAutoLoaderCost() {
         let cost = 0;
         if (autoLoaders === 0) {
-            cost = 0.50; // First cost
+            cost = 0.50; 
         } else if (autoLoaders === 1) {
-            cost = 0.75; // Second cost
+            cost = 0.75; 
         } else {
-            cost = 0.75 + ((autoLoaders - 1) * 0.15); // Scales by 0.15% per level
+            cost = 0.75 + ((autoLoaders - 1) * 0.15); 
         }
         
-        // Ensure the cost never exceeds the 5.00% ceiling
         return Math.min(cost, 5.00);
     }
 
@@ -59,12 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentProgress >= 25.00 && !capExpanded) {
             capExpanded = true;
             autoLoaderCap = 25; 
-            updateAutoLoaderUI(); 
             spawnFloatingAlert("Auto-Loader Cap Expanded!");
         }
+
+        // Continually check if buttons should be green (affordable) or gray (unaffordable)
+        updateAutoLoaderUI(); 
+        updateMultiplierUI();
     }
 
-    // Refresh Auto-Loader UI (Handles Info Text and Max Costs)
+    // Refresh Auto-Loader UI (Handles Info Text, Max Costs, and Colors)
     function updateAutoLoaderUI() {
         autoloaderCountText.innerText = `${autoLoaders}/${autoLoaderCap}`;
         const currentCost = getAutoLoaderCost();
@@ -72,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (autoLoaders >= autoLoaderCap) {
             buyAutoloaderBtn.classList.add('disabled');
             
-            // Show the special unlock info text if we haven't hit the 25% milestone
             if (!capExpanded) {
                 buyAutoloaderBtn.innerText = "MAX CAP";
                 autoloaderUnlockInfo.style.display = "block";
@@ -83,12 +83,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             buyAutoloaderBtn.innerText = `Cost: ${currentCost.toFixed(2)}%`;
-            buyAutoloaderBtn.classList.remove('disabled');
             autoloaderUnlockInfo.style.display = "none";
+
+            // The Affordability Check
+            if (currentProgress < currentCost) {
+                buyAutoloaderBtn.classList.add('disabled'); // Turns gray
+            } else {
+                buyAutoloaderBtn.classList.remove('disabled'); // Turns green
+            }
         }
     }
 
-    // Refresh Multiplier UI
+    // Refresh Multiplier UI (Handles Colors and Cap)
     function updateMultiplierUI() {
         multiplierCountText.innerText = `${multipliers}/${multiplierCap}`;
         
@@ -97,7 +103,13 @@ document.addEventListener('DOMContentLoaded', () => {
             buyMultiplierBtn.classList.add('disabled');
         } else {
             buyMultiplierBtn.innerText = `Cost: ${multiplierCost.toFixed(2)}%`;
-            buyMultiplierBtn.classList.remove('disabled');
+            
+            // The Affordability Check
+            if (currentProgress < multiplierCost) {
+                buyMultiplierBtn.classList.add('disabled'); // Turns gray
+            } else {
+                buyMultiplierBtn.classList.remove('disabled'); // Turns green
+            }
         }
     }
 
@@ -118,21 +130,19 @@ document.addEventListener('DOMContentLoaded', () => {
             currentProgress -= currentCost;
             autoLoaders++;
             
-            updateAutoLoaderUI();
             updateDisplay();
 
-            // Start or accelerate the passive income loop
             if (!autoLoaderInterval) {
                 autoLoaderInterval = setInterval(() => {
                     if (currentProgress < 100 && autoLoaders > 0) {
                         currentProgress += (0.01 * autoLoaders);
-                        updateDisplay();
+                        updateDisplay(); // Triggers UI checks every second too
                     }
                 }, 1000); 
             }
         } else if (autoLoaders < autoLoaderCap) {
             buyAutoloaderBtn.innerText = "Not Enough!";
-            setTimeout(() => { updateAutoLoaderUI(); }, 1000);
+            setTimeout(() => { updateDisplay(); }, 1000);
         }
     });
 
@@ -143,11 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
             multipliers++;
             clickPower *= 1.1; 
             
-            updateMultiplierUI();
             updateDisplay();
         } else if (multipliers < multiplierCap) {
             buyMultiplierBtn.innerText = "Not Enough!";
-            setTimeout(() => { updateMultiplierUI(); }, 1000);
+            setTimeout(() => { updateDisplay(); }, 1000);
         }
     });
 
@@ -191,4 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alertText.remove();
         }, 3000); 
     }
+
+    // --- Initialization ---
+    // Run this once at the start so buttons are gray immediately upon loading
+    updateDisplay();
 });
