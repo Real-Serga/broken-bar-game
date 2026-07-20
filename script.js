@@ -115,9 +115,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Main Click Event ---
     clickButton.addEventListener('click', (event) => {
         if (currentProgress < 100) {
-            currentProgress += clickPower;
+            
+            // Calculate effective click power
+            let effectiveClickPower = clickPower;
+            
+            // Bloatware Debuff: Holds back manual clicking power by 50% margin
+            if (bloatwareActive) {
+                effectiveClickPower *= 0.5;
+            }
+
+            currentProgress += effectiveClickPower;
             updateDisplay();
-            spawnFloatingText(event.clientX, event.clientY, `+${clickPower.toFixed(2)}%`, '#32CD32');
+            spawnFloatingText(event.clientX, event.clientY, `+${effectiveClickPower.toFixed(2)}%`, '#32CD32');
         }
     });
 
@@ -154,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 1. Calculate Generation
             let generation = (0.01 * autoLoaders);
             
-            // Bloatware Debuff: Halves generation speed
+            // Bloatware Debuff: Halves passive generation speed
             if (bloatwareActive) {
                 generation *= 0.5; 
             }
@@ -218,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bloatwareActive = true; 
         
         let hp = 5; 
-        bloatware.innerHTML = `BLOAT<br>HP:${hp}`;
+        bloatware.innerHTML = `BLOAT<br>HP:${hp}<br><span style="font-size: 8px; color: #ffaaaa; margin-top: 2px;">-50% GAIN</span>`;
         
         const pos = getRandomPosition(65, 65);
         bloatware.style.left = `${pos.x}px`;
@@ -228,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         bloatware.addEventListener('click', (e) => {
             hp--;
-            bloatware.innerHTML = `BLOAT<br>HP:${hp}`;
+            bloatware.innerHTML = `BLOAT<br>HP:${hp}<br><span style="font-size: 8px; color: #ffaaaa; margin-top: 2px;">-50% GAIN</span>`;
             spawnFloatingText(e.clientX, e.clientY, `-1 HP`, '#cccccc');
             
             if (hp <= 0) {
@@ -242,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const adware = document.createElement('div');
         adware.classList.add('adware-popup');
         
-        // Updated boundaries for the new 350x200 pixel size
+        // Updated boundaries for the 350x200 pixel size
         const adwareWidth = 350;
         const adwareHeight = 200;
         const pos = getRandomPosition(adwareWidth, adwareHeight);
