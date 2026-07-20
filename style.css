@@ -270,6 +270,11 @@ body {
     margin-bottom: 5px;
 }
 
+.title-with-info {
+    display: flex;
+    align-items: center;
+}
+
 .item-info h4 {
     color: #00BFFF; 
     font-size: 1.1rem;
@@ -286,13 +291,46 @@ body {
     font-size: 0.85rem;
 }
 
-/* Dynamic Unlock Info Text */
-.unlock-info {
-    color: #ffae42 !important; /* Standout orange */
-    font-size: 0.75rem !important;
+/* Dynamic Tooltip Info Circle */
+.info-circle {
+    display: none; /* Hidden by default via JS */
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #444;
+    color: #fff;
+    font-size: 0.75rem;
+    font-family: Arial, sans-serif;
     font-weight: bold;
-    margin-top: 5px;
-    display: none; /* Hidden by default via CSS */
+    text-align: center;
+    line-height: 18px;
+    margin-left: 8px;
+    cursor: help;
+    position: relative;
+    border: 1px solid #ffae42;
+}
+
+.info-circle::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 140%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #222;
+    color: #ffae42;
+    padding: 6px 10px;
+    border: 1px solid #ffae42;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+    z-index: 10;
+}
+
+.info-circle:hover::after {
+    opacity: 1;
 }
 
 .buy-button {

@@ -10,10 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let autoLoaderInterval = null;
     let capExpanded = false; 
 
-    // Multiplier Stats
+    // Multiplier Stats (Dynamic pricing array mapping exactly to +15% and +10%)
     let multipliers = 0;
     const multiplierCap = 3; 
-    const multiplierCost = 15.00; 
+    const multiplierCosts = [15.00, 30.00, 40.00];
 
     // --- HTML Elements ---
     const clickButton = document.getElementById('click-button');
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const buyAutoloaderBtn = document.getElementById('buy-autoloader');
     const autoloaderCountText = document.getElementById('autoloader-count');
-    const autoloaderUnlockInfo = document.getElementById('autoloader-unlock-info');
+    const autoloaderInfoCircle = document.getElementById('autoloader-info');
     
     const buyMultiplierBtn = document.getElementById('buy-multiplier');
     const multiplierCountText = document.getElementById('multiplier-count');
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const leftScrollBtn = document.querySelector('.left-scroll');
     const rightScrollBtn = document.querySelector('.right-scroll');
 
-    // --- Dynamic Pricing Function ---
+    // --- Dynamic Pricing Functions ---
     function getAutoLoaderCost() {
         let cost = 0;
         if (autoLoaders === 0) {
@@ -43,6 +43,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         return Math.min(cost, 5.00);
+    }
+
+    function getMultiplierCost() {
+        // Fallback to the last array element if something goes wrong
+        return multiplierCosts[multipliers] || multiplierCosts[multiplierCosts.length - 1];
     }
 
     // --- Global UI Updater ---
@@ -65,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMultiplierUI();
     }
 
-    // Refresh Auto-Loader UI (Handles Info Text, Max Costs, and Colors)
+    // Refresh Auto-Loader UI (Handles Colors, Cap, and Tooltip Info Circle)
     function updateAutoLoaderUI() {
         autoloaderCountText.innerText = `${autoLoaders}/${autoLoaderCap}`;
         const currentCost = getAutoLoaderCost();
@@ -75,26 +80,26 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (!capExpanded) {
                 buyAutoloaderBtn.innerText = "MAX CAP";
-                autoloaderUnlockInfo.style.display = "block";
-                autoloaderUnlockInfo.innerText = "Reach 25.00% progress to unlock more!";
+                // Show the small "i" circle only when capped and 25% not met
+                autoloaderInfoCircle.style.display = "inline-block"; 
             } else {
                 buyAutoloaderBtn.innerText = "MAX LEVEL";
-                autoloaderUnlockInfo.style.display = "none";
+                autoloaderInfoCircle.style.display = "none";
             }
         } else {
             buyAutoloaderBtn.innerText = `Cost: ${currentCost.toFixed(2)}%`;
-            autoloaderUnlockInfo.style.display = "none";
+            autoloaderInfoCircle.style.display = "none";
 
-            // The Affordability Check
+            // Affordability Check
             if (currentProgress < currentCost) {
-                buyAutoloaderBtn.classList.add('disabled'); // Turns gray
+                buyAutoloaderBtn.classList.add('disabled'); 
             } else {
-                buyAutoloaderBtn.classList.remove('disabled'); // Turns green
+                buyAutoloaderBtn.classList.remove('disabled'); 
             }
         }
     }
 
-    // Refresh Multiplier UI (Handles Colors and Cap)
+    // Refresh Multiplier UI (Handles Colors, Cap, and Dynamic Pricing)
     function updateMultiplierUI() {
         multiplierCountText.innerText = `${multipliers}/${multiplierCap}`;
         
@@ -102,13 +107,14 @@ document.addEventListener('DOMContentLoaded', () => {
             buyMultiplierBtn.innerText = "MAX CAP";
             buyMultiplierBtn.classList.add('disabled');
         } else {
-            buyMultiplierBtn.innerText = `Cost: ${multiplierCost.toFixed(2)}%`;
+            const currentMultCost = getMultiplierCost();
+            buyMultiplierBtn.innerText = `Cost: ${currentMultCost.toFixed(2)}%`;
             
-            // The Affordability Check
-            if (currentProgress < multiplierCost) {
-                buyMultiplierBtn.classList.add('disabled'); // Turns gray
+            // Affordability Check
+            if (currentProgress < currentMultCost) {
+                buyMultiplierBtn.classList.add('disabled'); 
             } else {
-                buyMultiplierBtn.classList.remove('disabled'); // Turns green
+                buyMultiplierBtn.classList.remove('disabled'); 
             }
         }
     }
@@ -136,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 autoLoaderInterval = setInterval(() => {
                     if (currentProgress < 100 && autoLoaders > 0) {
                         currentProgress += (0.01 * autoLoaders);
-                        updateDisplay(); // Triggers UI checks every second too
+                        updateDisplay(); 
                     }
                 }, 1000); 
             }
@@ -148,8 +154,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Multiplier Purchase Logic ---
     buyMultiplierBtn.addEventListener('click', () => {
-        if (currentProgress >= multiplierCost && multipliers < multiplierCap) {
-            currentProgress -= multiplierCost;
+        const currentMultCost = getMultiplierCost();
+
+        if (currentProgress >= currentMultCost && multipliers < multiplierCap) {
+            currentProgress -= currentMultCost;
             multipliers++;
             clickPower *= 1.1; 
             
@@ -202,6 +210,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Initialization ---
-    // Run this once at the start so buttons are gray immediately upon loading
     updateDisplay();
 });
