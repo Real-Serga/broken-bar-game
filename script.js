@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Core Progression Variables ---
     let currentProgress = 0.00;
     let clickPower = 1.00; 
+    let highestMilestone = 0; // Tracks every 10% bracket reached
     
     // Auto-Loader Stats
     let autoLoaders = 0;
@@ -18,7 +19,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const threatOverlay = document.getElementById('threat-overlay');
     let activeMalwares = []; 
     let bloatwareActive = false; 
-    let adwareActiveCount = 0; // Tracks if massive adwares are choking progress
+    let adwareActiveCount = 0; 
+
+    // --- Buff Variables ---
+    let clickBoostTimer = 0; // In seconds
 
     // --- HTML Elements ---
     const clickButton = document.getElementById('click-button');
@@ -35,6 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const upgradesList = document.getElementById('upgrades-list');
     const leftScrollBtn = document.querySelector('.left-scroll');
     const rightScrollBtn = document.querySelector('.right-scroll');
+    
+    const activeBoostsList = document.querySelector('.active-boosts-list'); // Left Panel
 
     // --- Dynamic Pricing Functions ---
     function getAutoLoaderCost() {
@@ -66,6 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
             capExpanded = true;
             autoLoaderCap = 25; 
             spawnFloatingAlert("Auto-Loader Cap Expanded!");
+        }
+
+        // Check Milestone: Every 10% for the Sketchy Pop-up
+        let currentMilestone = Math.floor(currentProgress / 10) * 10;
+        if (currentMilestone > highestMilestone && currentMilestone < 100) {
+            highestMilestone = currentMilestone;
+            spawnYouWinPopup();
         }
 
         updateAutoLoaderUI(); 
@@ -112,12 +125,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function updateBoostsUI() {
+        activeBoostsList.innerHTML = ''; // Clear placeholders
+        
+        if (clickBoostTimer > 0) {
+            const boostDiv = document.createElement('div');
+            boostDiv.classList.add('active-boost-item');
+            boostDiv.innerHTML = `2x CLICK<br>${clickBoostTimer}s`;
+            activeBoostsList.appendChild(boostDiv);
+        } else {
+            // Restore placeholders if no buffs are active
+            activeBoostsList.innerHTML = `
+                <div class="boost-placeholder"></div>
+                <div class="boost-placeholder"></div>
+                <div class="boost-placeholder"></div>
+            `;
+        }
+    }
+
     // --- Main Click Event ---
     clickButton.addEventListener('click', (event) => {
         if (currentProgress < 100) {
             
             // Calculate effective click power
             let effectiveClickPower = clickPower;
+            
+            // Apply 2x Buff if active
+            if (clickBoostTimer > 0) {
+                effectiveClickPower *= 2;
+            }
             
             // Bloatware Debuff: Holds back manual clicking power by 50% margin
             if (bloatwareActive) {
@@ -126,7 +162,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             currentProgress += effectiveClickPower;
             updateDisplay();
-            spawnFloatingText(event.clientX, event.clientY, `+${effectiveClickPower.toFixed(2)}%`, '#32CD32');
+            
+            // Change float text color if buff is active
+            let floatColor = clickBoostTimer > 0 ? '#FFD700' : '#32CD32'; 
+            spawnFloatingText(event.clientX, event.clientY, `+${effectiveClickPower.toFixed(2)}%`, floatColor);
         }
     });
 
@@ -160,6 +199,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Global Game Loop (Runs every 1 second) ---
     setInterval(() => {
         if (currentProgress < 100) {
+            // Handle Buff Timers
+            if (clickBoostTimer > 0) {
+                clickBoostTimer--;
+                updateBoostsUI();
+            }
+
             // 1. Calculate Generation
             let generation = (0.01 * autoLoaders);
             
@@ -251,7 +296,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const adware = document.createElement('div');
         adware.classList.add('adware-popup');
         
-        // Updated boundaries for the 350x200 pixel size
         const adwareWidth = 350;
         const adwareHeight = 200;
         const pos = getRandomPosition(adwareWidth, adwareHeight);
@@ -272,13 +316,68 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         threatOverlay.appendChild(adware);
-        adwareActiveCount++; // Apply the progress choke hold
+        adwareActiveCount++; 
 
         const closeBtn = adware.querySelector('.adware-close');
         closeBtn.addEventListener('click', () => {
             adware.remove();
-            adwareActiveCount--; // Release the choke hold
+            adwareActiveCount--; 
         });
+    }
+
+    // --- "You Win" Reward/Trap Function ---
+    function spawnYouWinPopup() {
+        const popup = document.createElement('div');
+        popup.classList.add('you-win-popup');
+        
+        const pos = getRandomPosition(300, 150);
+        popup.style.left = `${pos.x}px`;
+        popup.style.top = `${pos.y}px`;
+
+        // 50% chance to be a trap
+        const isTrap = Math.random() < 0.5;
+        const displayText = isTrap ? "C0NGR47S, Y0U W1N!" : "CONGRATS, YOU WIN!";
+
+        popup.innerHTML = `
+            <div class="you-win-header">
+                <span class="you-win-close">X</span>
+            </div>
+            <div class="you-win-body">
+                <span class="you-win-text">${displayText}</span>
+            </div>
+        `;
+
+        threatOverlay.appendChild(popup);
+
+        // Clicking the "X" safely closes it
+        const closeBtn = popup.querySelector('.you-win-close');
+        closeBtn.addEventListener('click', () => {
+            popup.remove();
+        });
+
+        // Clicking the main body triggers the effect
+        const bodyBtn = popup.querySelector('.you-win-body');
+        bodyBtn.addEventListener('click', () => {
+            if (isTrap) {
+                spawnFloatingAlert("TRICKED!");
+                currentProgress -= 5.00; // Deduct 5% penalty
+                spawnMalware();
+                spawnMalware(); // Spawn 2 malwares as punishment
+                updateDisplay();
+            } else {
+                spawnFloatingAlert("2x CLICK BOOST!");
+                clickBoostTimer += 15; // Add 15 seconds of 2x clicking
+                updateBoostsUI();
+            }
+            popup.remove();
+        });
+        
+        // Auto-remove after 10 seconds if ignored
+        setTimeout(() => {
+            if (document.body.contains(popup)) {
+                popup.remove();
+            }
+        }, 10000);
     }
 
     // --- Dynamic Threat Director ---
@@ -348,5 +447,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Initialization ---
+    updateBoostsUI();
     updateDisplay();
 });

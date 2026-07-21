@@ -468,3 +468,76 @@ body {
     80% { transform: translate(2px, -2px) }
     100% { transform: translate(0) }
 }
+
+/* --- "You Win" Pop-up and Trap Mechanics --- */
+.you-win-popup {
+    position: absolute;
+    width: 300px;
+    height: 150px;
+    background-color: #ffff00; /* Obnoxious bright yellow */
+    border: 5px dashed #ff0000;
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+    pointer-events: auto;
+    display: flex; 
+    flex-direction: column;
+    z-index: 700; 
+    animation: flashBorder 0.5s infinite alternate;
+}
+
+.you-win-header {
+    background-color: #ff0000;
+    color: white;
+    padding: 5px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.you-win-close {
+    cursor: pointer;
+    font-weight: bold;
+    font-family: sans-serif;
+    color: white;
+    padding: 0 5px;
+}
+
+.you-win-body {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer; /* The whole body is clickable */
+    padding: 10px;
+}
+
+.you-win-text {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0000ff;
+    text-decoration: underline;
+    animation: blinkText 0.3s infinite alternate;
+}
+
+@keyframes flashBorder {
+    from { border-color: #ff0000; }
+    to { border-color: #0000ff; }
+}
+
+@keyframes blinkText {
+    from { color: #0000ff; }
+    to { color: #ff0000; }
+}
+
+/* Active Boost List Item (Left Panel) */
+.active-boost-item {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #32CD32;
+    background-color: rgba(50, 205, 50, 0.1);
+    color: #32CD32;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    box-shadow: 0 0 5px rgba(50, 205, 50, 0.5);
+}
